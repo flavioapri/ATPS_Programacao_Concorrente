@@ -7,7 +7,10 @@ import br.com.tanngrisnir.modelo.Pedido;
 
 /**Classe que gera um buffer populado com 5000 pedidos.
  * 
+ * @author Daiana Paula Tizer Parra
+ * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
+ * @author Samuel Raul Gennari
  * @version 1.0.0
  */
 public class Buffer {

@@ -7,8 +7,11 @@ package br.com.tanngrisnir.logica;
  * polimorfismo torna o objeto consumidor uma thread.
  * 
  * @version 1.0.0
+ * @author Daiana Paula Tizer Parra
+ * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
- *
+ * @author Samuel Raul Gennari
+ * 
  */
 public class Consumidor implements Runnable {
 
@@ -17,12 +20,17 @@ public class Consumidor implements Runnable {
 	private long tempoTotalPedido;
 	private long tempoInicialThread;
 	private long tempoTotalThread;
-	private double tempoMedioExecucoes;
+	private long tempoMedioExecucoes;
 	private int execucoes;
+	private int idThread;
 
-	
-	public Consumidor(Buffer buffer) {
+	public Consumidor(Buffer buffer, int idThread) {
 		this.buffer = buffer;
+		this.idThread = idThread;
+	}
+
+	public double getTempoMedioExecucoes() {
+		return tempoMedioExecucoes;
 	}
 
 	/**
@@ -37,9 +45,6 @@ public class Consumidor implements Runnable {
 	 */
 	@Override
 	public void run() {
-
-		System.out.println("Executando a thread. Aguarde...\n");
-
 		execucoes = 0;
 		tempoInicialThread = System.currentTimeMillis();
 		while (!buffer.getBuffer().isEmpty()) {
@@ -47,8 +52,8 @@ public class Consumidor implements Runnable {
 			while (i < 10) {
 				if (!buffer.getBuffer().isEmpty()) { // Se o buffer não estiver
 														// vazio...
-					System.out.println("Thread: consumidor1");
-					System.out.println("Pedido ID: "
+					System.out.print("\nThread: thread" + idThread);
+					System.out.print(" - Pedido ID: "
 							+ buffer.getBuffer().get(0).getId());
 					// Retorna o tempo inicial de acordo com o atual em
 					// milisegundos.
@@ -60,7 +65,7 @@ public class Consumidor implements Runnable {
 					// elementos precedentes serão realocados automaticamente.
 					buffer.getBuffer().remove(0);
 					try {
-						Thread.sleep(1); // Pausa a thread por um determinado
+						Thread.sleep(10000); // Pausa a thread por um determinado
 											// tempo em milisegundos.
 					} catch (InterruptedException e) {
 						System.out.println("A execução da thread falhou!");
@@ -68,17 +73,17 @@ public class Consumidor implements Runnable {
 					}
 					tempoTotalPedido = System.currentTimeMillis()
 							- tempoInicialPedido;
-					System.out.println("Tempo de processamento: "
+					System.out.print(" - Tempo de processamento: "
 							+ tempoTotalPedido + " ms\n");
 				}
 				i++;
+				System.out.println(this.buffer.getBuffer().size());
 			}
 			execucoes++;
 		}
+		// Calcula o tempo total dos 10 pedidos processados na thread
 		tempoTotalThread = System.currentTimeMillis() - tempoInicialThread;
+		// Calcula o tempo medio dos 10 pedidos processados na thread;
 		tempoMedioExecucoes = tempoTotalThread / execucoes;
-		System.out.println("Thread: consumidor1");
-		System.out.println("Tempo médio para 10 execuções: " + tempoMedioExecucoes
-				+ " ms");
 	}
 }

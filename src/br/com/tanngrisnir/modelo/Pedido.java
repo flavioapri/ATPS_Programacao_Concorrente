@@ -5,7 +5,10 @@ import java.math.BigInteger;
 /**
  * Classe modelo representando um pedido.
  * 
+ * @author Daiana Paula Tizer Parra
+ * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
+ * @author Samuel Raul Gennari
  * @version 1.0.0
  */
 public class Pedido {
