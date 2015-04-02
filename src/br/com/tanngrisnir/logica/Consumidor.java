@@ -7,7 +7,7 @@ package br.com.tanngrisnir.logica;
  * polimorfismo torna o objeto consumidor uma thread.
  * 
  * @version 1.0.0
- * @author Daiana Paula Tizer Parra
+ * @author Daiana Paula Tizer Parra 
  * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
  * @author Samuel Raul Gennari
