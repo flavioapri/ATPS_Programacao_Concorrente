@@ -17,42 +17,28 @@ import br.com.tanngrisnir.logica.Consumidor;
  *
  */
 public class TestaThreads {
-
 	public static void main(String[] args) throws InterruptedException {
-
-		int tempoTotalExecucaoQtdThreads = 0;
-		double tempoMedioExecucaoQtdThreads = 0;
-		int qtdThreads = 1; // Quantidade de threads a serem executadas.
-
-		// Foram usadas duas listas para o teste porque a lógica de cálculo da
-		// media do tempo de execução de cada thread esta encapsulado na classe
-		// Consumidor, após a execução de uma thread não é possível acessar
-		// de alguma maneira o atributo com este valor.
-		// As duas listas contém referências para os mesmos objetos, então toda
-		// a alteração feita em tempo de execução em cada thread pode ser
-		// acessada através da referência em consumidores.
-		List<Consumidor> consumidores = new ArrayList<Consumidor>();
+		int qtdThreads = 1000; // Quantidade de threads a serem executadas.
+		long tempoInicialThread;
+		long tempoTotalThread;
+		// Lista que vai armazenar a respectiva quantidade
+		// de threads
 		List<Thread> threads = new ArrayList<Thread>();
-
+		Buffer buffer = new Buffer(); // Buffer com os pedidos
 		int i = 0;
 		while (i < qtdThreads) {
-			// Cria uma lista de consumidores de acordo com a respectiva
-			// quantidade de
-			// threads informadas.
-			consumidores.add(new Consumidor(new Buffer(), i));
-			// Cria uma lista de threads que recebe referências para execução
-			// para os respectivos objetos em consumidores
-			threads.add(new Thread(consumidores.get(i)));
+			// Cria uma lista de threads que recebe a respectiva quantidade
+			// de consumidores.
+			threads.add(new Thread(new Consumidor(buffer, i)));
 			i++;
 		}
-
+		tempoInicialThread = System.currentTimeMillis();
 		i = 0;
 		while (i < threads.size()) {
 			// Executa as threads.
 			threads.get(i).start();
 			i++;
 		}
-
 		i = 0;
 		while (i < threads.size()) {
 			// O método join serve para bloquear as threads, para que
@@ -62,23 +48,10 @@ public class TestaThreads {
 			threads.get(i).join();
 			i++;
 		}
-
-		i = 0;
-		while (i < consumidores.size()) {
-			// Soma o tempo total de todas as threads
-			tempoTotalExecucaoQtdThreads += consumidores.get(i)
-					.getTempoMedioExecucoes();
-			i++;
-		}
-
-		// Calcula o tempo médio de execução de cada thread
-		tempoMedioExecucaoQtdThreads = tempoTotalExecucaoQtdThreads
-				/ qtdThreads;
-
-		System.out.println("\nTempo total de execução: "
-				+ tempoTotalExecucaoQtdThreads + " ms");
-
+		tempoTotalThread = System.currentTimeMillis() - tempoInicialThread;
+		System.out.println("\nTempo total de execução: " + tempoTotalThread
+				+ " ms");
 		System.out.println("\nTempo médio de execução para " + qtdThreads
-				+ " threads: " + tempoMedioExecucaoQtdThreads + " ms");
+				+ " threads: " + (tempoTotalThread / qtdThreads) + " ms");
 	}
 }

@@ -9,7 +9,10 @@ import br.com.tanngrisnir.modelo.Pedido;
  * Gera pedidos com ID de 20 algarismos e uma string representando um pacote de
  * dados com 1000 caracteres de texto.
  * 
+ * @author Daiana Paula Tizer Parra
+ * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
+ * @author Samuel Raul Gennari
  * @version 1.0.0
  */
 public class Produtor {
@@ -18,7 +21,6 @@ public class Produtor {
 	private Random gerador = new Random();
 	// Array populado com caracteres aleatórios para a posterior composição do
 	// atributo "Id" do pedido.
-	//
 	private char valoresAleatorios[] = new char[20];
 	// Array populado com caracteres aleatórios para a posterior composição do
 	// atributo "Pacote de Dados" do pedido.
@@ -53,6 +55,7 @@ public class Produtor {
 			i++;
 		}
 		pedido.setPacoteDados(new String(caracteresAleatorios));
+		
 
 		return pedido;
 	}

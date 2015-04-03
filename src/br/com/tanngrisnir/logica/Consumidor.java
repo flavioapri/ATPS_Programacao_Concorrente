@@ -7,7 +7,7 @@ package br.com.tanngrisnir.logica;
  * polimorfismo torna o objeto consumidor uma thread.
  * 
  * @version 1.0.0
- * @author Daiana Paula Tizer Parra 
+ * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
  * @author Samuel Raul Gennari
@@ -18,19 +18,11 @@ public class Consumidor implements Runnable {
 	private Buffer buffer;
 	private long tempoInicialPedido;
 	private long tempoTotalPedido;
-	private long tempoInicialThread;
-	private long tempoTotalThread;
-	private long tempoMedioExecucoes;
-	private int execucoes;
 	private int idThread;
 
 	public Consumidor(Buffer buffer, int idThread) {
 		this.buffer = buffer;
 		this.idThread = idThread;
-	}
-
-	public double getTempoMedioExecucoes() {
-		return tempoMedioExecucoes;
 	}
 
 	/**
@@ -45,8 +37,6 @@ public class Consumidor implements Runnable {
 	 */
 	@Override
 	public void run() {
-		execucoes = 0;
-		tempoInicialThread = System.currentTimeMillis();
 		while (!buffer.getBuffer().isEmpty()) {
 			int i = 0;
 			while (i < 10) {
@@ -65,8 +55,9 @@ public class Consumidor implements Runnable {
 					// elementos precedentes serão realocados automaticamente.
 					buffer.getBuffer().remove(0);
 					try {
-						Thread.sleep(10000); // Pausa a thread por um determinado
-											// tempo em milisegundos.
+						Thread.sleep(10000); // Pausa a thread por um
+												// determinado
+												// tempo em milisegundos.
 					} catch (InterruptedException e) {
 						System.out.println("A execução da thread falhou!");
 						e.printStackTrace();
@@ -77,13 +68,14 @@ public class Consumidor implements Runnable {
 							+ tempoTotalPedido + " ms\n");
 				}
 				i++;
-				System.out.println(this.buffer.getBuffer().size());
+
+				if (!buffer.getBuffer().isEmpty()) {
+					System.out.println("Pedido: "
+							+ this.buffer.getBuffer().size());
+				} else {
+					System.out.println("O buffer esta vazio.");
+				}
 			}
-			execucoes++;
 		}
-		// Calcula o tempo total dos 10 pedidos processados na thread
-		tempoTotalThread = System.currentTimeMillis() - tempoInicialThread;
-		// Calcula o tempo medio dos 10 pedidos processados na thread;
-		tempoMedioExecucoes = tempoTotalThread / execucoes;
 	}
 }
