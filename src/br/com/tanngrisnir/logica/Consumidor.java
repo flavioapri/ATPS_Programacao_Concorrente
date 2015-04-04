@@ -1,5 +1,7 @@
 package br.com.tanngrisnir.logica;
 
+import java.math.BigInteger;
+
 /**
  * Representa um objeto que vai consumir os dados do buffer da aplicação. Todo
  * consumidor é executado por uma thread, para que isto seja possível faz-se
@@ -39,12 +41,11 @@ public class Consumidor implements Runnable {
 	public void run() {
 		while (!buffer.getBuffer().isEmpty()) {
 			int i = 0;
+			BigInteger idPedido = buffer.getBuffer().get(i).getId();
 			while (i < 10) {
-				if (!buffer.getBuffer().isEmpty()) { // Se o buffer não estiver
+				if (!buffer.getBuffer().isEmpty()) { // Se o buffer não
+														// estiver
 														// vazio...
-					System.out.print("\nThread: thread" + idThread);
-					System.out.print(" - Pedido ID: "
-							+ buffer.getBuffer().get(0).getId());
 					// Retorna o tempo inicial de acordo com o atual em
 					// milisegundos.
 					tempoInicialPedido = System.currentTimeMillis();
@@ -52,7 +53,8 @@ public class Consumidor implements Runnable {
 					// da interface List.
 					// Sempre que for removido o primeiro elemento da lista
 					// todos os
-					// elementos precedentes serão realocados automaticamente.
+					// elementos precedentes serão realocados
+					// automaticamente.
 					buffer.getBuffer().remove(0);
 					try {
 						Thread.sleep(10000); // Pausa a thread por um
@@ -62,13 +64,16 @@ public class Consumidor implements Runnable {
 						System.out.println("A execução da thread falhou!");
 						e.printStackTrace();
 					}
-					tempoTotalPedido = System.currentTimeMillis()
-							- tempoInicialPedido;
-					System.out.print(" - Tempo de processamento: "
-							+ tempoTotalPedido + " ms\n");
+					if (!buffer.getBuffer().isEmpty()) {
+						System.out.print("\nThread: thread" + idThread);
+						System.out.print(" - Pedido ID: " + idPedido);
+						tempoTotalPedido = System.currentTimeMillis()
+								- tempoInicialPedido;
+						System.out.print(" - Tempo de processamento: "
+								+ tempoTotalPedido + " ms\n");
+					}
 				}
 				i++;
-
 				if (!buffer.getBuffer().isEmpty()) {
 					System.out.println("Pedido: "
 							+ this.buffer.getBuffer().size());

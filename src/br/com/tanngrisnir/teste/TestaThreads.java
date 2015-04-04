@@ -2,6 +2,7 @@ package br.com.tanngrisnir.teste;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Scanner;
 
 import br.com.tanngrisnir.logica.Buffer;
 import br.com.tanngrisnir.logica.Consumidor;
@@ -18,13 +19,17 @@ import br.com.tanngrisnir.logica.Consumidor;
  */
 public class TestaThreads {
 	public static void main(String[] args) throws InterruptedException {
-		int qtdThreads = 1000; // Quantidade de threads a serem executadas.
+		int qtdThreads = 10; // Quantidade de threads a serem executadas.
 		long tempoInicialThread;
 		long tempoTotalThread;
+		Scanner e = new Scanner(System.in);
 		// Lista que vai armazenar a respectiva quantidade
 		// de threads
 		List<Thread> threads = new ArrayList<Thread>();
 		Buffer buffer = new Buffer(); // Buffer com os pedidos
+		System.out.print("Informe a quantidade de threads: ");
+		qtdThreads = e.nextInt();
+		System.out.println("Inicializando threads. Aguarde...");
 		int i = 0;
 		while (i < qtdThreads) {
 			// Cria uma lista de threads que recebe a respectiva quantidade
@@ -35,8 +40,8 @@ public class TestaThreads {
 		tempoInicialThread = System.currentTimeMillis();
 		i = 0;
 		while (i < threads.size()) {
-			// Executa as threads.
-			threads.get(i).start();
+				// Executa as threads.
+				threads.get(i).start();
 			i++;
 		}
 		i = 0;
