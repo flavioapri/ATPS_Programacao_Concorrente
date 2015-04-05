@@ -1,6 +1,9 @@
 package br.com.tanngrisnir.logica;
 
 import java.math.BigInteger;
+import java.util.List;
+
+import br.com.tanngrisnir.modelo.Pedido;
 
 /**
  * Representa um objeto que vai consumir os dados do buffer da aplicação. Todo
@@ -8,7 +11,7 @@ import java.math.BigInteger;
  * nescessário a implementação da Interface "Runnable" que através do
  * polimorfismo torna o objeto consumidor uma thread.
  * 
- * @version 1.0.0
+ * @version 1.1
  * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
@@ -17,14 +20,19 @@ import java.math.BigInteger;
  */
 public class Consumidor implements Runnable {
 
-	private Buffer buffer;
+	private List<Pedido> buffer;
 	private long tempoInicialPedido;
 	private long tempoTotalPedido;
 	private int idThread;
+	private static int pedidosProcessados = 0;
 
-	public Consumidor(Buffer buffer, int idThread) {
+	public Consumidor(List<Pedido> buffer, int idThread) {
 		this.buffer = buffer;
 		this.idThread = idThread;
+	}
+
+	public static int getPedidosProcessados() {
+		return pedidosProcessados;
 	}
 
 	/**
@@ -33,52 +41,49 @@ public class Consumidor implements Runnable {
 	 * dentro de run é o código que vai ser executado quando a thread for
 	 * invocada.
 	 * 
-	 * @version 1.0.0
+	 * @version 1.1
 	 * @author Flavio Aparecido Ribeiro
 	 *
 	 */
 	@Override
 	public void run() {
-		while (!buffer.getBuffer().isEmpty()) {
-			int i = 0;
-			BigInteger idPedido = buffer.getBuffer().get(i).getId();
-			while (i < 10) {
-				if (!buffer.getBuffer().isEmpty()) { // Se o buffer não
-														// estiver
-														// vazio...
-					// Retorna o tempo inicial de acordo com o atual em
-					// milisegundos.
-					tempoInicialPedido = System.currentTimeMillis();
-					// Aqui podemos ver ama das grandes vantagens no uso
-					// da interface List.
-					// Sempre que for removido o primeiro elemento da lista
-					// todos os
-					// elementos precedentes serão realocados
-					// automaticamente.
-					buffer.getBuffer().remove(0);
-					try {
-						Thread.sleep(10000); // Pausa a thread por um
-												// determinado
-												// tempo em milisegundos.
-					} catch (InterruptedException e) {
-						System.out.println("A execução da thread falhou!");
-						e.printStackTrace();
+		synchronized (this) {
+			while (!buffer.isEmpty() && !Produtor.isTempoEsgotado()) {
+				int i = 0;
+				BigInteger idPedido = buffer.get(i).getId();
+				while (i < 10) {
+					if (!buffer.isEmpty()) { // Se o buffer não
+												// estiver
+												// vazio...
+						// Retorna o tempo inicial de acordo com o atual em
+						// milisegundos.
+						tempoInicialPedido = System.currentTimeMillis();
+						// Aqui podemos ver ama das grandes vantagens no uso
+						// da interface List.
+						// Sempre que for removido o primeiro elemento da lista
+						// todos os
+						// elementos precedentes serão realocados
+						// automaticamente.
+						buffer.remove(0);
+						try {
+							Thread.sleep(10000); // Pausa a thread por um
+													// determinado
+													// tempo em milisegundos.
+						} catch (InterruptedException e) {
+							System.out.println("A execução da thread falhou!");
+							e.printStackTrace();
+						}
+						if (!buffer.isEmpty()) {
+							tempoTotalPedido = System.currentTimeMillis()
+									- tempoInicialPedido;
+							System.out.println("\nThread: cosumidor" + idThread
+									+ " - Pedido ID: " + idPedido
+									+ " - Tempo de processamento: "
+									+ tempoTotalPedido + " ms");
+							pedidosProcessados++;
+						}
 					}
-					if (!buffer.getBuffer().isEmpty()) {
-						System.out.print("\nThread: thread" + idThread);
-						System.out.print(" - Pedido ID: " + idPedido);
-						tempoTotalPedido = System.currentTimeMillis()
-								- tempoInicialPedido;
-						System.out.print(" - Tempo de processamento: "
-								+ tempoTotalPedido + " ms\n");
-					}
-				}
-				i++;
-				if (!buffer.getBuffer().isEmpty()) {
-					System.out.println("Pedido: "
-							+ this.buffer.getBuffer().size());
-				} else {
-					System.out.println("O buffer esta vazio.");
+					i++;
 				}
 			}
 		}
