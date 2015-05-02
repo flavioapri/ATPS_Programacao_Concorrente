@@ -1,7 +1,6 @@
 package br.com.tanngrisnir.logica;
 
 import java.math.BigInteger;
-import java.util.List;
 import java.util.Random;
 
 import br.com.tanngrisnir.modelo.Pedido;
@@ -34,24 +33,15 @@ public class Produtor implements Runnable {
 	// private Buffer bufferPedido;
 	private int idThread;
 	private long tempoInicial;
-	private long tempoTotal;
-	private static int pedidosProcessados;
 
 	public Produtor(int idThread, Buffer buffer) {
 		this.buffer = buffer;
 		this.idThread = idThread;
 	}
 
-	public static int getPedidosProcessados() {
-		return pedidosProcessados;
-	}
-
-	/**
-	 * Gera objetos do tipo Pedido
-	 */
 	public void run() {
-		boolean repetidor = true;
-		while (repetidor) {
+		int j = 0;
+		while (j < 10) {
 			tempoInicial = System.currentTimeMillis();
 			Pedido pedido = new Pedido();
 			// Gera valores aleatórios de caracteres para o array, o
@@ -92,7 +82,7 @@ public class Produtor implements Runnable {
 				e.printStackTrace();
 			}
 			buffer.set(pedido, idThread, tempoInicial);
+			j++;
 		}
 	}
-
 }

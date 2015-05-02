@@ -1,10 +1,5 @@
 package br.com.tanngrisnir.logica;
 
-import java.math.BigInteger;
-import java.util.List;
-
-import br.com.tanngrisnir.modelo.Pedido;
-
 /**
  * Representa um objeto que vai consumir os dados do buffer da aplicação. Todo
  * consumidor é executado por uma thread, para que isto seja possível faz-se
@@ -21,19 +16,12 @@ import br.com.tanngrisnir.modelo.Pedido;
 public class Consumidor implements Runnable {
 
 	private Buffer buffer;
-	private Buffer bufferPedido;
 	private long tempoInicial;
-	private long tempoTotalPedido;
 	private int idThread;
-	private static int pedidosProcessados = 0;
 
 	public Consumidor(Buffer buffer, int idThread) {
 		this.buffer = buffer;
 		this.idThread = idThread;
-	}
-
-	public static int getPedidosProcessados() {
-		return pedidosProcessados;
 	}
 
 	/**
@@ -48,8 +36,8 @@ public class Consumidor implements Runnable {
 	 */
 	@Override
 	public void run() {
-		boolean repetidor = true;
-		while (repetidor) {
+		int i = 0;
+		while (i < 10) {
 			// Retorna o tempo inicial de acordo com o atual em
 			// milisegundos.
 			tempoInicial = System.currentTimeMillis();
@@ -68,6 +56,7 @@ public class Consumidor implements Runnable {
 				e.printStackTrace();
 			}
 			buffer.get(idThread, tempoInicial);
+			i++;
 		}
 	}
 }

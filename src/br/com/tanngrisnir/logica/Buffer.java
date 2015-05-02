@@ -17,17 +17,30 @@ import br.com.tanngrisnir.modelo.Pedido;
 public class Buffer {
 
 	private List<Pedido> pedidos;
+	private static int pedidosProcessados;
 
 	public Buffer() {
 		this.pedidos = new ArrayList<Pedido>(5000);
+		Buffer.pedidosProcessados = 0;
 	}
 
 	public List<Pedido> getPedidos() {
 		return pedidos;
 	}
 
-	public synchronized void set(Pedido pedido, int idThread, long tempoInicial) {
+	public static int getPedidosProcessados() {
+		return pedidosProcessados;
+	}
 
+	public synchronized void set(Pedido pedido, int idThread, long tempoInicial) {
+		while (pedidos.size() > 5000) {
+			try {
+				System.out.println("produtor" + idThread + " aguardando...");
+				wait();
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 		pedidos.add(pedido);
 		System.out.println("produtor" + idThread + " inseriu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
@@ -47,10 +60,10 @@ public class Buffer {
 		}
 		pedido = pedidos.get(0);
 		pedidos.remove(0);
+		pedidosProcessados++;
 		System.out.println("consumidor" + idThread + " removeu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
-				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
+				+ (System.currentTimeMillis() - tempoInicial) + " ms\n" + "Buffer size: " + pedidos.size());
 		notifyAll();
 	}
-
 }
