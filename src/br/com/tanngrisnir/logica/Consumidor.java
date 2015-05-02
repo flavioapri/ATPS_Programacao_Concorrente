@@ -20,13 +20,14 @@ import br.com.tanngrisnir.modelo.Pedido;
  */
 public class Consumidor implements Runnable {
 
-	private List<Pedido> buffer;
-	private long tempoInicialPedido;
+	private Buffer buffer;
+	private Buffer bufferPedido;
+	private long tempoInicial;
 	private long tempoTotalPedido;
 	private int idThread;
 	private static int pedidosProcessados = 0;
 
-	public Consumidor(List<Pedido> buffer, int idThread) {
+	public Consumidor(Buffer buffer, int idThread) {
 		this.buffer = buffer;
 		this.idThread = idThread;
 	}
@@ -47,45 +48,26 @@ public class Consumidor implements Runnable {
 	 */
 	@Override
 	public void run() {
-		synchronized (this) {
-			while (!buffer.isEmpty() && !Produtor.isTempoEsgotado()) {
-				int i = 0;
-				BigInteger idPedido = buffer.get(i).getId();
-				while (i < 10) {
-					if (!buffer.isEmpty()) { // Se o buffer não
-												// estiver
-												// vazio...
-						// Retorna o tempo inicial de acordo com o atual em
-						// milisegundos.
-						tempoInicialPedido = System.currentTimeMillis();
-						// Aqui podemos ver ama das grandes vantagens no uso
-						// da interface List.
-						// Sempre que for removido o primeiro elemento da lista
-						// todos os
-						// elementos precedentes serão realocados
-						// automaticamente.
-						buffer.remove(0);
-						try {
-							Thread.sleep(10000); // Pausa a thread por um
-													// determinado
-													// tempo em milisegundos.
-						} catch (InterruptedException e) {
-							System.out.println("A execução da thread falhou!");
-							e.printStackTrace();
-						}
-						if (!buffer.isEmpty()) {
-							tempoTotalPedido = System.currentTimeMillis()
-									- tempoInicialPedido;
-							System.out.println("\nThread: cosumidor" + idThread
-									+ " - Pedido ID: " + idPedido
-									+ " - Tempo de processamento: "
-									+ tempoTotalPedido + " ms");
-							pedidosProcessados++;
-						}
-					}
-					i++;
-				}
+		boolean repetidor = true;
+		while (repetidor) {
+			// Retorna o tempo inicial de acordo com o atual em
+			// milisegundos.
+			tempoInicial = System.currentTimeMillis();
+			// Aqui podemos ver ama das grandes vantagens no uso
+			// da interface List.
+			// Sempre que for removido o primeiro elemento da lista
+			// todos os
+			// elementos precedentes serão realocados
+			// automaticamente.
+			try {
+				Thread.sleep(10000); // Pausa a thread por um
+										// determinado
+										// tempo em milisegundos.
+			} catch (InterruptedException e) {
+				System.out.println("A execução da thread falhou!");
+				e.printStackTrace();
 			}
+			buffer.get(idThread, tempoInicial);
 		}
 	}
 }

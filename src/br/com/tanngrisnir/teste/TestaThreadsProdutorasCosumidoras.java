@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
+import br.com.tanngrisnir.logica.Buffer;
 import br.com.tanngrisnir.logica.Consumidor;
 import br.com.tanngrisnir.logica.Produtor;
 import br.com.tanngrisnir.modelo.Pedido;
@@ -26,36 +27,18 @@ public class TestaThreadsProdutorasCosumidoras {
 		// de threads
 		List<Thread> threadsProdutoras = new ArrayList<Thread>(qtdThreads);
 		List<Thread> threadsConsumidoras = new ArrayList<Thread>(qtdThreads);
-		List<Pedido> buffer = new ArrayList<Pedido>(5000);
+		Buffer buffer = new Buffer();
 		System.out.print("Informe a quantidade de threads: ");
 		qtdThreads = e.nextInt();
 		System.out.println("\nInicializando threads. Aguarde...");
 		int i = 0;
 		while (i < qtdThreads) {
 			// Popula as listas de threads
-			threadsProdutoras.add(new Thread(new Produtor(buffer, i)));
-			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i)));
-			i++;
-		}
-		i = 0;
-		while (i < qtdThreads) {
-			// Executa as threads.
+			threadsProdutoras.add(new Thread(new Produtor(i, buffer)));
 			threadsProdutoras.get(i).start();
+			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i)));
 			threadsConsumidoras.get(i).start();
 			i++;
 		}
-		i = 0;
-		while (i < qtdThreads) {
-			// O método join serve para bloquear as threads, para que
-			// o restante no código nesta classe de testes possa ser
-			// executado.
-			// Deve ser executado em todas as threads em execução.
-			threadsProdutoras.get(i).join();
-			threadsConsumidoras.get(i).join();
-			i++;
-		}
-		System.out.println("Total de pedidos processados: "
-				+ (Produtor.getPedidosProcessados() - Consumidor
-						.getPedidosProcessados()));
 	}
 }

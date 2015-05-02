@@ -19,6 +19,7 @@ public class Pedido {
 	private BigInteger id;
 	// A string representando o pacote de dados em tipo texto.
 	private String pacoteDados;
+	private boolean livre;
 
 	public BigInteger getId() {
 		return id;
@@ -34,5 +35,13 @@ public class Pedido {
 
 	public void setPacoteDados(String pacoteDados) {
 		this.pacoteDados = pacoteDados;
+	}
+
+	public boolean isLivre() {
+		return livre;
+	}
+
+	public void setLivre(boolean livre) {
+		this.livre = livre;
 	}
 }
