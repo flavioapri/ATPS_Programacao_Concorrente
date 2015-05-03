@@ -30,11 +30,10 @@ public class Produtor implements Runnable {
 	private char caracteresAleatorios[] = new char[1000];
 	// Objeto compartilhado.
 	private Buffer buffer;
-	// private Buffer bufferPedido;
 	private int idThread;
 	private long tempoInicial;
 
-	public Produtor(int idThread, Buffer buffer) {
+	public Produtor(Buffer buffer, int idThread) {
 		this.buffer = buffer;
 		this.idThread = idThread;
 	}
@@ -45,13 +44,9 @@ public class Produtor implements Runnable {
 			tempoInicial = System.currentTimeMillis();
 			Pedido pedido = new Pedido();
 			// Gera valores aleatórios de caracteres para o array, o
-			// valor
-			// 10 para o
-			// método nextInt é utilizado para indicar que seram
-			// gerados
-			// valores de
-			// 0 a 9 e '0' é para indicar que devem ser gerados
-			// caracteres.
+			// valor 10 para o método nextInt é utilizado para indicar que seram
+			// gerados valores de 0 a 9 e '0' é para indicar que devem ser
+			// gerados caracteres.
 			int i = 0;
 			while (i < 20) {
 				valoresAleatorios[i] = (char) (gerador.nextInt(10) + '0');
@@ -60,14 +55,9 @@ public class Produtor implements Runnable {
 			pedido.setId(new BigInteger(new String(valoresAleatorios)));
 			i = 0;
 			// Gera valores aleatórios de caracteres para o array, o
-			// valor
-			// 26 para o
-			// método nextInt é utilizado para indicar que seram
-			// gerados
-			// valores de
-			// 0 a 25 e 'a' é para indicar que devem ser gerados os
-			// caracteres que
-			// representam letras.
+			// valor 26 para o método nextInt é utilizado para indicar que seram
+			// gerados valores de 0 a 25 e 'a' é para indicar que devem ser
+			// gerados os caracteres que representam letras.
 			while (i < 1000) {
 				caracteresAleatorios[i] = (char) (gerador.nextInt(26) + 'a');
 				i++;
@@ -81,7 +71,7 @@ public class Produtor implements Runnable {
 				System.out.println("A execução da thread falhou!");
 				e.printStackTrace();
 			}
-			buffer.set(pedido, idThread, tempoInicial);
+			buffer.inserePedido(pedido, idThread, tempoInicial);
 			j++;
 		}
 	}

@@ -6,7 +6,7 @@ package br.com.tanngrisnir.logica;
  * nescessário a implementação da Interface "Runnable" que através do
  * polimorfismo torna o objeto consumidor uma thread.
  * 
- * @version 1.1
+ * @version 1.2
  * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
@@ -15,7 +15,7 @@ package br.com.tanngrisnir.logica;
  */
 public class Consumidor implements Runnable {
 
-	private Buffer buffer;
+	private Buffer buffer; // Referência ao objeto compartilhado.
 	private long tempoInicial;
 	private int idThread;
 
@@ -30,14 +30,15 @@ public class Consumidor implements Runnable {
 	 * dentro de run é o código que vai ser executado quando a thread for
 	 * invocada.
 	 * 
-	 * @version 1.1
+	 * @version 1.2
 	 * @author Flavio Aparecido Ribeiro
 	 *
 	 */
 	@Override
 	public void run() {
 		int i = 0;
-		while (i < 10) {
+		while (i < 10) { // 10 execuções para cada thread, definido na
+							// atividade.
 			// Retorna o tempo inicial de acordo com o atual em
 			// milisegundos.
 			tempoInicial = System.currentTimeMillis();
@@ -55,7 +56,7 @@ public class Consumidor implements Runnable {
 				System.out.println("A execução da thread falhou!");
 				e.printStackTrace();
 			}
-			buffer.get(idThread, tempoInicial);
+			buffer.removePedido(idThread, tempoInicial);
 			i++;
 		}
 	}
