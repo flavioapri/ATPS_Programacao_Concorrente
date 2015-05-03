@@ -20,10 +20,12 @@ public class Buffer {
 
 	private List<Pedido> pedidos;
 	private static int pedidosProcessados;
+	private static long tempoTotalDeProcessamento;
 
 	public Buffer() {
 		this.pedidos = new ArrayList<Pedido>(5000);
 		Buffer.pedidosProcessados = 0;
+		Buffer.tempoTotalDeProcessamento = 0;
 	}
 
 	public List<Pedido> getPedidos() {
@@ -32,6 +34,10 @@ public class Buffer {
 
 	public static int getPedidosProcessados() {
 		return pedidosProcessados;
+	}
+
+	public static long getTempoTotalDeProcessamento() {
+		return tempoTotalDeProcessamento;
 	}
 
 	/**
@@ -44,15 +50,17 @@ public class Buffer {
 	 * @version 1.0
 	 * @author Flavio Aparecido Ribeiro
 	 */
-	public void inserePedido(Pedido pedido, int idThread, long tempoInicial, Semaphore semaforo) {
+	public void inserePedido(Pedido pedido, int idThread, long tempoInicial,
+			Semaphore semaforo) {
 		while (pedidos.size() > 5000) { // Se o buffer estiver cheio manda a
 										// thread aguardar até que uma thread
 										// consumidora libere espaço no buffer
 										// para inserir um pedido.
 			try {
 				System.out.println("produtor#" + idThread + " aguardando...");
-				semaforo.wait(); // Manda a thread aguardar até que seja notificada por
-						// outra.
+				semaforo.wait(); // Manda a thread aguardar até que seja
+									// notificada por
+				// outra.
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -61,6 +69,9 @@ public class Buffer {
 		System.out.println("produtor#" + idThread + " inseriu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
+		tempoTotalDeProcessamento += System.currentTimeMillis() - tempoInicial;
+		notifyAll(); // Informa as outras threads que o acesso foi liberado por
+						// esta.
 	}
 
 	/**
@@ -80,8 +91,9 @@ public class Buffer {
 									// produtora insira pedidos.
 			try {
 				System.out.println("consumidor#" + idThread + " aguardando...");
-				semaforo.wait(); // Manda a thread aguradar até que seja notificada por
-						// outra.
+				semaforo.wait(); // Manda a thread aguradar até que seja
+									// notificada por
+				// outra.
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -93,5 +105,8 @@ public class Buffer {
 		System.out.println("consumidor#" + idThread + " removeu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
+		tempoTotalDeProcessamento += System.currentTimeMillis() - tempoInicial;
+		notifyAll(); // Informa as outras threads que o acesso foi liberado por
+						// esta.
 	}
 }

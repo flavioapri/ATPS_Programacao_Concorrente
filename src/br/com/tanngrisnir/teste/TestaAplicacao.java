@@ -57,6 +57,8 @@ public class TestaAplicacao {
 			public void run() {
 				System.out.println("Total de pedidos processados em 3 min: "
 						+ Buffer.getPedidosProcessados());
+				System.out.println("Tempo total de processamento: "
+						+ (Buffer.getTempoTotalDeProcessamento()));
 				timer.cancel(); // Termina a execução da tarefa.
 
 			}
