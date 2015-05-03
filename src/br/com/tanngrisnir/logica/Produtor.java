@@ -2,6 +2,7 @@ package br.com.tanngrisnir.logica;
 
 import java.math.BigInteger;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import br.com.tanngrisnir.modelo.Pedido;
 
@@ -32,10 +33,12 @@ public class Produtor implements Runnable {
 	private Buffer buffer;
 	private int idThread;
 	private long tempoInicial;
+	private Semaphore semaforo;
 
-	public Produtor(Buffer buffer, int idThread) {
+	public Produtor(Buffer buffer, int idThread, Semaphore semaforo) {
 		this.buffer = buffer;
 		this.idThread = idThread;
+		this.semaforo = semaforo;
 	}
 
 	public void run() {
@@ -68,10 +71,18 @@ public class Produtor implements Runnable {
 				// milisegundos
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				System.out.println("A execução da thread falhou!");
+				System.out.print("A execução da thread falhou.");
 				e.printStackTrace();
 			}
-			buffer.inserePedido(pedido, idThread, tempoInicial);
+			try {
+				semaforo.acquire();
+				buffer.inserePedido(pedido, idThread, tempoInicial, semaforo);
+			} catch (InterruptedException e) {
+				System.out.print("Falha ao requisitar a trava para o semáforo.");
+				e.printStackTrace();
+			} finally {
+				semaforo.release();
+			}
 			j++;
 		}
 	}

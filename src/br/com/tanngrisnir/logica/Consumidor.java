@@ -1,5 +1,7 @@
 package br.com.tanngrisnir.logica;
 
+import java.util.concurrent.Semaphore;
+
 /**
  * Representa um objeto que vai consumir os dados do buffer da aplicação. Todo
  * consumidor é executado por uma thread, para que isto seja possível faz-se
@@ -18,10 +20,12 @@ public class Consumidor implements Runnable {
 	private Buffer buffer; // Referência ao objeto compartilhado.
 	private long tempoInicial;
 	private int idThread;
+	private Semaphore semaforo;
 
-	public Consumidor(Buffer buffer, int idThread) {
+	public Consumidor(Buffer buffer, int idThread, Semaphore semaforo) {
 		this.buffer = buffer;
 		this.idThread = idThread;
+		this.semaforo = semaforo;
 	}
 
 	/**
@@ -53,10 +57,18 @@ public class Consumidor implements Runnable {
 										// determinado
 										// tempo em milisegundos.
 			} catch (InterruptedException e) {
-				System.out.println("A execução da thread falhou!");
+				System.out.print("A execução da thread falhou.");
 				e.printStackTrace();
 			}
-			buffer.removePedido(idThread, tempoInicial);
+			try {
+				semaforo.acquire();
+				buffer.removePedido(idThread, tempoInicial, semaforo);
+			} catch (InterruptedException e) {
+				System.out.print("Falha ao requisitar a trava para o semáforo.");
+				e.printStackTrace();
+			} finally {
+				semaforo.release();
+			}
 			i++;
 		}
 	}

@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
 
 import br.com.tanngrisnir.logica.Buffer;
 import br.com.tanngrisnir.logica.Consumidor;
@@ -25,6 +26,7 @@ public class TestaAplicacao {
 		int qtdThreads; // Quantidade de threads a serem executadas.
 		Buffer buffer = new Buffer(); // Objeto compartilhado
 		Timer timer = new Timer(); // Objeto que vai contar o tempo
+		Semaphore semaforo = new Semaphore(1);
 		Scanner e = new Scanner(System.in);
 		System.out.print("Informe a quantidade de threads: ");
 		qtdThreads = e.nextInt();
@@ -35,9 +37,9 @@ public class TestaAplicacao {
 		System.out.println("\nInicializando threads. Aguarde...\n");
 		for (int i = 0; i < qtdThreads; i++) {
 			// Popula as listas de threads
-			threadsProdutoras.add(new Thread(new Produtor(buffer, i)));
+			threadsProdutoras.add(new Thread(new Produtor(buffer, i, semaforo)));
 			threadsProdutoras.get(i).start();
-			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i)));
+			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i, semaforo)));
 			threadsConsumidoras.get(i).start();
 		}
 
