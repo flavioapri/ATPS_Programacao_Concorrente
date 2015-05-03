@@ -19,10 +19,12 @@ public class Buffer {
 
 	private List<Pedido> pedidos;
 	private static int pedidosProcessados;
+	private static long tempoTotalDeProcessamento;
 
 	public Buffer() {
 		this.pedidos = new ArrayList<Pedido>(5000);
 		Buffer.pedidosProcessados = 0;
+		Buffer.tempoTotalDeProcessamento = 0;
 	}
 
 	public List<Pedido> getPedidos() {
@@ -31,6 +33,10 @@ public class Buffer {
 
 	public static int getPedidosProcessados() {
 		return pedidosProcessados;
+	}
+	
+	public static long getTempoTotalDeProcessamento() {
+		return tempoTotalDeProcessamento;
 	}
 
 	/**
@@ -61,6 +67,7 @@ public class Buffer {
 		System.out.println("produtor" + idThread + " inseriu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
+		tempoTotalDeProcessamento += System.currentTimeMillis() - tempoInicial;
 		notifyAll(); // Informa as outras threads que o acesso foi liberado por
 						// esta.
 	}
@@ -95,6 +102,7 @@ public class Buffer {
 		System.out.println("consumidor" + idThread + " removeu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
+		tempoTotalDeProcessamento += System.currentTimeMillis() - tempoInicial;
 		notifyAll(); // Informa as outras threads que o acesso foi liberado por
 						// esta.
 	}
