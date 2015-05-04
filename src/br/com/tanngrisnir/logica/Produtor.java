@@ -71,14 +71,15 @@ public class Produtor implements Runnable {
 				// milisegundos
 				Thread.sleep(5000);
 			} catch (InterruptedException e) {
-				System.out.print("A execução da thread falhou.");
+				System.out.println("A execução da thread falhou.");
 				e.printStackTrace();
 			}
 			try {
 				semaforo.acquire();
 				buffer.inserePedido(pedido, idThread, tempoInicial, semaforo);
 			} catch (InterruptedException e) {
-				System.out.print("Falha ao requisitar a trava para o semáforo.");
+				System.out
+						.println("Falha ao requisitar a trava para o semáforo.");
 				e.printStackTrace();
 			} finally {
 				semaforo.release();

@@ -3,7 +3,7 @@ package br.com.tanngrisnir.logica;
 import java.util.concurrent.Semaphore;
 
 /**
- * Representa um objeto que vai consumir os dados do buffer da aplicação. Todo
+ * Representa um objeto que vai consumir os dados do buffer da programa. Todo
  * consumidor é executado por uma thread, para que isto seja possível faz-se
  * nescessário a implementação da Interface "Runnable" que através do
  * polimorfismo torna o objeto consumidor uma thread.
@@ -57,14 +57,15 @@ public class Consumidor implements Runnable {
 										// determinado
 										// tempo em milisegundos.
 			} catch (InterruptedException e) {
-				System.out.print("A execução da thread falhou.");
+				System.out.println("A execução da thread falhou.");
 				e.printStackTrace();
 			}
 			try {
 				semaforo.acquire();
 				buffer.removePedido(idThread, tempoInicial, semaforo);
 			} catch (InterruptedException e) {
-				System.out.print("Falha ao requisitar a trava para o semáforo.");
+				System.out
+						.println("Falha ao requisitar a trava para o semáforo.");
 				e.printStackTrace();
 			} finally {
 				semaforo.release();

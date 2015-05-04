@@ -7,7 +7,7 @@ import java.util.concurrent.Semaphore;
 import br.com.tanngrisnir.modelo.Pedido;
 
 /**
- * Classe que gera um buffer que será o objeto compartilhado na aplicação,
+ * Classe que gera um buffer que será o objeto compartilhado na programa,
  * populado com 5000 pedidos.
  * 
  * @author Daiana Paula Tizer Parra
@@ -45,7 +45,7 @@ public class Buffer {
 	 * "synchronized" informa que o código de região crítica dentro do método
 	 * deve ser realizado de maneira sincronizada, impedindo que outras threads
 	 * acessem ao mesmo tempo esta região, impede-se assim a colisão de dados na
-	 * aplicação.
+	 * programa.
 	 * 
 	 * @version 1.0
 	 * @author Flavio Aparecido Ribeiro
@@ -69,9 +69,6 @@ public class Buffer {
 		System.out.println("produtor#" + idThread + " inseriu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
-		tempoTotalDeProcessamento += System.currentTimeMillis() - tempoInicial;
-		notifyAll(); // Informa as outras threads que o acesso foi liberado por
-						// esta.
 	}
 
 	/**
@@ -79,7 +76,7 @@ public class Buffer {
 	 * "synchronized" informa que o código de região crítica dentro do método
 	 * deve ser realizado de maneira sincronizada, impedindo que outras threads
 	 * acessem ao mesmo tempo esta região, impede-se assim a colisão de dados na
-	 * aplicação.
+	 * programa.
 	 * 
 	 * @version 1.0
 	 * @author Flavio Aparecido Ribeiro
@@ -91,7 +88,7 @@ public class Buffer {
 									// produtora insira pedidos.
 			try {
 				System.out.println("consumidor#" + idThread + " aguardando...");
-				semaforo.wait(); // Manda a thread aguradar até que seja
+				wait(); // Manda a thread aguradar até que seja
 									// notificada por
 				// outra.
 			} catch (Exception e) {
@@ -106,7 +103,5 @@ public class Buffer {
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");
 		tempoTotalDeProcessamento += System.currentTimeMillis() - tempoInicial;
-		notifyAll(); // Informa as outras threads que o acesso foi liberado por
-						// esta.
 	}
 }

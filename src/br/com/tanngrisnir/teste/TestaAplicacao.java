@@ -1,6 +1,9 @@
 package br.com.tanngrisnir.teste;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
@@ -12,7 +15,7 @@ import br.com.tanngrisnir.logica.Consumidor;
 import br.com.tanngrisnir.logica.Produtor;
 
 /**
- * Classe principal para teste da aplicação.
+ * Classe principal para teste da programa.
  * 
  * @version 1.2
  * @author Daiana Paula Tizer Parra
@@ -22,10 +25,17 @@ import br.com.tanngrisnir.logica.Produtor;
  *
  */
 public class TestaAplicacao {
+	@SuppressWarnings("resource")
 	public static void main(String[] args) throws InterruptedException {
 		int qtdThreads; // Quantidade de threads a serem executadas.
+		long tempoInicialDeProcessamento;
+		Date tempo;
+		DateFormat formatoTempo;
+		String tempoTotalDeProcessamento;
 		Buffer buffer = new Buffer(); // Objeto compartilhado
 		Timer timer = new Timer(); // Objeto que vai contar o tempo
+		// O parâmetro recebido no construtor informa quantas threads podem
+		// acessar a região crítica do objeto compartilhado simultâneamente.
 		Semaphore semaforo = new Semaphore(1);
 		Scanner e = new Scanner(System.in);
 		System.out.print("Informe a quantidade de threads: ");
@@ -35,40 +45,56 @@ public class TestaAplicacao {
 		List<Thread> threadsProdutoras = new ArrayList<Thread>(qtdThreads);
 		List<Thread> threadsConsumidoras = new ArrayList<Thread>(qtdThreads);
 		System.out.println("\nInicializando threads. Aguarde...\n");
+		// Inicia a contagem do tempo de processamento da programa.
+		tempoInicialDeProcessamento = System.currentTimeMillis();
 		for (int i = 0; i < qtdThreads; i++) {
-			// Popula as listas de threads
-			threadsProdutoras.add(new Thread(new Produtor(buffer, i, semaforo)));
+			// Popula as listas de threads e as inicializa através do método
+			// start().
+			threadsProdutoras
+					.add(new Thread(new Produtor(buffer, i, semaforo)));
 			threadsProdutoras.get(i).start();
-			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i, semaforo)));
+			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i,
+					semaforo)));
 			threadsConsumidoras.get(i).start();
 		}
 
 		/**
 		 * O método "schedule" agenda uma tarefa para que seja realizada após um
 		 * determinado tempo uma única vez. Aqui o método é utilizado para
-		 * informar a quantidade de pedidos processados pela aplicação após um
-		 * tempo predeterminado que no caso é 3 minutos (180000 ms).
+		 * interromper a execução de todas as threads e informar informar a
+		 * quantidade de pedidos processados pela programa após tempo
+		 * predeterminado de 3 minutos (180000 ms) que é o especificado na
+		 * atividade.
 		 * 
-		 * @version 1.0
+		 * @version 1.1
 		 * @author Flávio Aparecido Ribeiro
 		 */
 		timer.schedule(new TimerTask() {
 			@Override
 			public void run() {
-				System.out.println("Total de pedidos processados em 3 min: "
-						+ Buffer.getPedidosProcessados());
-				System.out.println("Tempo total de processamento: "
-						+ (Buffer.getTempoTotalDeProcessamento()));
+				for (int i = 0; i < qtdThreads; i++) { // Interrompe todas as
+														// threads.
+					threadsConsumidoras.get(i).interrupt();
+					threadsProdutoras.get(i).interrupt();
+				}
+				System.out
+						.println("Total de pedidos processados no tempo limite de 3 min: "
+								+ Buffer.getPedidosProcessados());
 				timer.cancel(); // Termina a execução da tarefa.
-
 			}
-		}, 180000); // Parâmetro que define o tempo para a execução da tarefa
+		}, 120000); // Parâmetro que define o tempo para a execução da tarefa
 					// (em milisegundos).
 		for (int i = 0; i < qtdThreads; i++) {
-			// O método join() vai informar quando a thread morrer para a
-			// aplicação, dando continuidade ao fluxo normal desta.
+			// Manda o programa aguardar até que todas a threads morram para
+			// continuar o fluxo normal.
 			threadsConsumidoras.get(i).join();
 			threadsProdutoras.get(i).join();
 		}
+		tempo = new Date(System.currentTimeMillis()
+				- tempoInicialDeProcessamento);
+		formatoTempo = new SimpleDateFormat("mm:ss,SSS");
+		tempoTotalDeProcessamento = formatoTempo.format(tempo);
+		System.out.println("Tempo total de processamento: "
+				+ tempoTotalDeProcessamento);
 	}
 }
