@@ -38,9 +38,8 @@ public class Consumidor implements Runnable {
 	 */
 	@Override
 	public void run() {
-		int i = 0;
-		while (i < 10) { // 10 execuções para cada thread, definido na
-							// atividade.
+		boolean producao = true;
+		while (producao) {
 			// Retorna o tempo inicial de acordo com o atual em
 			// milisegundos.
 			tempoInicial = new Date(System.currentTimeMillis());
@@ -59,7 +58,6 @@ public class Consumidor implements Runnable {
 				e.printStackTrace();
 			}
 			buffer.removePedido(idThread, tempoInicial);
-			i++;
 		}
 	}
 }

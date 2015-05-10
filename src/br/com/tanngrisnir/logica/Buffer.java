@@ -94,8 +94,8 @@ public class Buffer {
 		pedido = pedidos.get(0);
 		pedidos.remove(pedido); // Remove o pedido.
 		pedidosProcessados++; // Foi considerado como pedido processado todo o
-		Date tempoFinal = new Date(System.currentTimeMillis());
 		// pedido que foi produzido, e após, consumido.
+		Date tempoFinal = new Date(System.currentTimeMillis());		
 		System.out.println("consumidor#" + idThread + " consumiu o pedido "
 				+ pedido.getId() + " - Início: "
 				+ formatoData.format(tempoInicial) + " Término: "
