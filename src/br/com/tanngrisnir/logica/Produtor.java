@@ -3,6 +3,7 @@ package br.com.tanngrisnir.logica;
 import java.math.BigInteger;
 import java.util.Date;
 import java.util.Random;
+import java.util.concurrent.Semaphore;
 
 import br.com.tanngrisnir.modelo.Pedido;
 
@@ -15,9 +16,9 @@ import br.com.tanngrisnir.modelo.Pedido;
  * 
  * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
- * @author Flavio Aparecido Ribeiro
+ * @author Flávio Aparecido Ribeiro
  * @author Samuel Raul Gennari
- * @version 1.1
+ * @version 1.2
  */
 public class Produtor implements Runnable {
 
@@ -31,12 +32,14 @@ public class Produtor implements Runnable {
 	private char caracteresAleatorios[] = new char[1000];
 	// Objeto compartilhado.
 	private Buffer buffer;
+	private Semaphore semaforo;
 	private int idThread;
 	private Date tempoInicial;
 
-	public Produtor(Buffer buffer, int idThread) {
+	public Produtor(Buffer buffer, int idThread, Semaphore semaforo) {
 		this.buffer = buffer;
 		this.idThread = idThread;
+		this.semaforo = semaforo;
 	}
 
 	public void run() {
@@ -74,7 +77,7 @@ public class Produtor implements Runnable {
 				System.out.println("A execução da thread falhou.");
 				e.printStackTrace();
 			}
-			buffer.inserePedido(pedido, idThread, tempoInicial);
+			buffer.inserePedido(pedido, idThread, tempoInicial, semaforo);
 		}
 	}
 }

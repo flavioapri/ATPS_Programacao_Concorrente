@@ -7,7 +7,7 @@ import java.math.BigInteger;
  * 
  * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
- * @author Flavio Aparecido Ribeiro
+ * @author Flávio Aparecido Ribeiro
  * @author Samuel Raul Gennari
  * @version 1.0.0
  */

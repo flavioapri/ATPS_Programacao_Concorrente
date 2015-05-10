@@ -1,13 +1,11 @@
 package br.com.tanngrisnir.teste;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Semaphore;
 
 import br.com.tanngrisnir.logica.Buffer;
 import br.com.tanngrisnir.logica.Consumidor;
@@ -16,7 +14,7 @@ import br.com.tanngrisnir.logica.Produtor;
 /**
  * Classe principal para teste da programa.
  * 
- * @version 1.1
+ * @version 1.2
  * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
  * @author Flávio Aparecido Ribeiro
@@ -27,6 +25,9 @@ public class TestaPrototipo {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws InterruptedException {
 		int qtdThreads; // Quantidade de threads a serem executadas.
+		Semaphore semaforo = new Semaphore(1);
+		// Semáforo que fara o controle do acesso aos recursos. O argumento
+		// informa o número de acessos simultaneos que podem ser feitos.
 		Buffer buffer = new Buffer(); // Objeto compartilhado
 		Timer timer = new Timer(); // Objeto que vai contar o tempo
 		Scanner e = new Scanner(System.in);
@@ -41,9 +42,9 @@ public class TestaPrototipo {
 		for (int i = 0; i < qtdThreads; i++) {
 			// Popula as listas de threads e as inicializa através do método
 			// start().
-			threadsProdutoras.add(new Thread(new Produtor(buffer, i)));
+			threadsProdutoras.add(new Thread(new Produtor(buffer, i, semaforo)));
 			threadsProdutoras.get(i).start();
-			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i)));
+			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i, semaforo)));
 			threadsConsumidoras.get(i).start();
 		}
 
