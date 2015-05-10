@@ -1,8 +1,8 @@
 package br.com.tanngrisnir.logica;
 
 import java.math.BigInteger;
+import java.util.Date;
 import java.util.Random;
-import java.util.concurrent.Semaphore;
 
 import br.com.tanngrisnir.modelo.Pedido;
 
@@ -32,19 +32,17 @@ public class Produtor implements Runnable {
 	// Objeto compartilhado.
 	private Buffer buffer;
 	private int idThread;
-	private long tempoInicial;
-	private Semaphore semaforo;
+	private Date tempoInicial;
 
-	public Produtor(Buffer buffer, int idThread, Semaphore semaforo) {
+	public Produtor(Buffer buffer, int idThread) {
 		this.buffer = buffer;
 		this.idThread = idThread;
-		this.semaforo = semaforo;
 	}
 
 	public void run() {
 		int j = 0;
 		while (j < 10) {
-			tempoInicial = System.currentTimeMillis();
+			tempoInicial = new Date(System.currentTimeMillis());
 			Pedido pedido = new Pedido();
 			// Gera valores aleatórios de caracteres para o array, o
 			// valor 10 para o método nextInt é utilizado para indicar que seram
@@ -74,16 +72,7 @@ public class Produtor implements Runnable {
 				System.out.println("A execução da thread falhou.");
 				e.printStackTrace();
 			}
-			try {
-				semaforo.acquire();
-				buffer.inserePedido(pedido, idThread, tempoInicial, semaforo);
-			} catch (InterruptedException e) {
-				System.out
-						.println("Falha ao requisitar a trava para o semáforo.");
-				e.printStackTrace();
-			} finally {
-				semaforo.release();
-			}
+				buffer.inserePedido(pedido, idThread, tempoInicial);
 			j++;
 		}
 	}

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
 import java.util.TimerTask;
-import java.util.concurrent.Semaphore;
 
 import br.com.tanngrisnir.logica.Buffer;
 import br.com.tanngrisnir.logica.Consumidor;
@@ -17,14 +16,14 @@ import br.com.tanngrisnir.logica.Produtor;
 /**
  * Classe principal para teste da programa.
  * 
- * @version 1.2
+ * @version 1.1
  * @author Daiana Paula Tizer Parra
  * @author Fabio de Paula dos Anjos
  * @author Flávio Aparecido Ribeiro
  * @author Samuel Raul Gennari
  *
  */
-public class TestaAplicacao {
+public class TestaPrototipo {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws InterruptedException {
 		int qtdThreads; // Quantidade de threads a serem executadas.
@@ -34,9 +33,6 @@ public class TestaAplicacao {
 		String tempoTotalDeProcessamento;
 		Buffer buffer = new Buffer(); // Objeto compartilhado
 		Timer timer = new Timer(); // Objeto que vai contar o tempo
-		// O parâmetro recebido no construtor informa quantas threads podem
-		// acessar a região crítica do objeto compartilhado simultâneamente.
-		Semaphore semaforo = new Semaphore(1);
 		Scanner e = new Scanner(System.in);
 		System.out.print("Informe a quantidade de threads: ");
 		qtdThreads = e.nextInt();
@@ -50,11 +46,9 @@ public class TestaAplicacao {
 		for (int i = 0; i < qtdThreads; i++) {
 			// Popula as listas de threads e as inicializa através do método
 			// start().
-			threadsProdutoras
-					.add(new Thread(new Produtor(buffer, i, semaforo)));
+			threadsProdutoras.add(new Thread(new Produtor(buffer, i)));
 			threadsProdutoras.get(i).start();
-			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i,
-					semaforo)));
+			threadsConsumidoras.add(new Thread(new Consumidor(buffer, i)));
 			threadsConsumidoras.get(i).start();
 		}
 
@@ -66,7 +60,7 @@ public class TestaAplicacao {
 		 * predeterminado de 3 minutos (180000 ms) que é o especificado na
 		 * atividade.
 		 * 
-		 * @version 1.1
+		 * @version 1.0
 		 * @author Flávio Aparecido Ribeiro
 		 */
 		timer.schedule(new TimerTask() {
