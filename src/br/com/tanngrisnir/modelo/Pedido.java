@@ -9,7 +9,8 @@ import java.math.BigInteger;
  * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
  * @author Samuel Raul Gennari
- * @version 1.0.0
+ * @version 1.0 
+ * 
  */
 public class Pedido {
 	// Foi adotada a classe BigInteger para o id porque porque o tipo long não
