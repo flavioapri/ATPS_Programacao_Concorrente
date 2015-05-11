@@ -40,8 +40,8 @@ public class Consumidor implements Runnable {
 	 */
 	@Override
 	public void run() {
-		int i = 0;
-		while (i < 10) { // 10 execuções para cada thread, definido na
+		boolean producao = true;
+		while (producao) { // 10 execuções para cada thread, definido na
 							// atividade.
 			// Retorna o tempo inicial de acordo com o atual em
 			// milisegundos.
@@ -70,7 +70,6 @@ public class Consumidor implements Runnable {
 			} finally {
 				semaforo.release();
 			}
-			i++;
 		}
 	}
 }

@@ -14,7 +14,7 @@ import br.com.tanngrisnir.modelo.Pedido;
  * @author Fabio de Paula dos Anjos
  * @author Flavio Aparecido Ribeiro
  * @author Samuel Raul Gennari
- * @version 1.2
+ * @version 1.3
  */
 public class Buffer {
 
@@ -41,27 +41,22 @@ public class Buffer {
 	}
 
 	/**
-	 * Método responsavel por adicionar os pedidos ao buffer. A palavra chave
-	 * "synchronized" informa que o código de região crítica dentro do método
-	 * deve ser realizado de maneira sincronizada, impedindo que outras threads
-	 * acessem ao mesmo tempo esta região, impede-se assim a colisão de dados na
-	 * programa.
+	 * Método responsavel por adicionar os pedidos ao buffer. O método esta
+	 * utilizando sincronismo entre as threads através das chamadas a wait() e
+	 * notifyAll().
 	 * 
-	 * @version 1.0
-	 * @author Flavio Aparecido Ribeiro
+	 * @version 1.3
+	 * @author Flávio Aparecido Ribeiro
 	 */
-	public void inserePedido(Pedido pedido, int idThread, long tempoInicial,
+	public synchronized void inserePedido(Pedido pedido, int idThread, long tempoInicial,
 			Semaphore semaforo) {
-		while (pedidos.size() > 5000) { // Se o buffer estiver cheio manda a
-										// thread aguardar até que uma thread
-										// consumidora libere espaço no buffer
-										// para inserir um pedido.
+		while (pedidos.size() > 5000) {
+			// Se o buffer estiver cheio manda a thread aguradar a liberação do
+			// recurso através da chamada a wait.
 			try {
 				System.out.println("produtor#" + idThread + " aguardando...");
-				semaforo.wait(); // Manda a thread aguardar até que seja
-									// notificada por
-				// outra.
-			} catch (Exception e) {
+				wait();
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
@@ -72,33 +67,31 @@ public class Buffer {
 	}
 
 	/**
-	 * Método responsável por remover os pedidos do buffer. A palavra chave
-	 * "synchronized" informa que o código de região crítica dentro do método
-	 * deve ser realizado de maneira sincronizada, impedindo que outras threads
-	 * acessem ao mesmo tempo esta região, impede-se assim a colisão de dados na
-	 * programa.
+	 * Método responsável por remover os pedidos do buffer. O método esta
+	 * utilizando sincronismo entre as threads através das chamadas a wait() e
+	 * notifyAll().
 	 * 
-	 * @version 1.0
-	 * @author Flavio Aparecido Ribeiro
+	 * @version 1.3
+	 * @author Flávio Aparecido Ribeiro
 	 */
-	public void removePedido(int idThread, long tempoInicial, Semaphore semaforo) {
-		Pedido pedido;
-		while (pedidos.isEmpty()) { // Enquanto o buffer estiver vazio manda a
-									// thread aguardar até que uma thread
-									// produtora insira pedidos.
+	public synchronized void removePedido(int idThread, long tempoInicial, Semaphore semaforo) {
+		while (pedidos.isEmpty()) {
+			// Se o buffer estiver vazio manda a thread aguardar um produtor
+			// inserir um pedido, para assim, poder ser consumido.
 			try {
 				System.out.println("consumidor#" + idThread + " aguardando...");
-				wait(); // Manda a thread aguradar até que seja
-									// notificada por
-				// outra.
-			} catch (Exception e) {
+				wait();
+			} catch (InterruptedException e) {
 				e.printStackTrace();
 			}
 		}
+		Pedido pedido;
 		pedido = pedidos.get(0);
-		pedidos.remove(0); // Remove o pedido.
-		pedidosProcessados++; // Foi considerado como pedido processado todo o
-								// pedido que foi produzido e depois consumido.
+		pedidos.remove(pedido); // Remove o pedido.
+		pedidosProcessados++; // Foi considerado como pedido processado todo
+								// o
+								// pedido que foi produzido e depois
+								// consumido.
 		System.out.println("consumidor#" + idThread + " removeu o pedido "
 				+ pedido.getId() + " - Tempo de processamento "
 				+ (System.currentTimeMillis() - tempoInicial) + " ms\n");

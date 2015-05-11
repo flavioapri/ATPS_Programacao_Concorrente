@@ -42,12 +42,16 @@ public class Produtor implements Runnable {
 	}
 
 	public void run() {
-		int j = 0;
-		while (j < 10) {
+		boolean producao = true;
+		while (producao) {
+			if (buffer.getPedidos().size() >= 5000) {
+				break;
+			}
 			tempoInicial = System.currentTimeMillis();
 			Pedido pedido = new Pedido();
 			// Gera valores aleatórios de caracteres para o array, o
-			// valor 10 para o método nextInt é utilizado para indicar que seram
+			// valor 10 para o método nextInt é utilizado para indicar que
+			// seram
 			// gerados valores de 0 a 9 e '0' é para indicar que devem ser
 			// gerados caracteres.
 			int i = 0;
@@ -58,7 +62,8 @@ public class Produtor implements Runnable {
 			pedido.setId(new BigInteger(new String(valoresAleatorios)));
 			i = 0;
 			// Gera valores aleatórios de caracteres para o array, o
-			// valor 26 para o método nextInt é utilizado para indicar que seram
+			// valor 26 para o método nextInt é utilizado para indicar que
+			// seram
 			// gerados valores de 0 a 25 e 'a' é para indicar que devem ser
 			// gerados os caracteres que representam letras.
 			while (i < 1000) {
@@ -84,7 +89,6 @@ public class Produtor implements Runnable {
 			} finally {
 				semaforo.release();
 			}
-			j++;
 		}
 	}
 }

@@ -1,9 +1,6 @@
 package br.com.tanngrisnir.teste;
 
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 import java.util.Scanner;
 import java.util.Timer;
@@ -24,19 +21,18 @@ import br.com.tanngrisnir.logica.Produtor;
  * @author Samuel Raul Gennari
  *
  */
-public class TestaAplicacao {
+public class TestaPrototipo {
 	@SuppressWarnings("resource")
 	public static void main(String[] args) throws InterruptedException {
 		int qtdThreads; // Quantidade de threads a serem executadas.
-		long tempoInicialDeProcessamento;
-		Date tempo;
-		DateFormat formatoTempo;
-		String tempoTotalDeProcessamento;
 		Buffer buffer = new Buffer(); // Objeto compartilhado
 		Timer timer = new Timer(); // Objeto que vai contar o tempo
 		// O parâmetro recebido no construtor informa quantas threads podem
 		// acessar a região crítica do objeto compartilhado simultâneamente.
-		Semaphore semaforo = new Semaphore(1);
+		// O parâmetro true garante a ordem na fila de espera das 
+		// threads, a primeira a receber a permissão sempre será a primeira 
+		// a acessar o recurso.
+		Semaphore semaforo = new Semaphore(1, true);
 		Scanner e = new Scanner(System.in);
 		System.out.print("Informe a quantidade de threads: ");
 		qtdThreads = e.nextInt();
@@ -46,7 +42,6 @@ public class TestaAplicacao {
 		List<Thread> threadsConsumidoras = new ArrayList<Thread>(qtdThreads);
 		System.out.println("\nInicializando threads. Aguarde...\n");
 		// Inicia a contagem do tempo de processamento da programa.
-		tempoInicialDeProcessamento = System.currentTimeMillis();
 		for (int i = 0; i < qtdThreads; i++) {
 			// Popula as listas de threads e as inicializa através do método
 			// start().
@@ -81,20 +76,9 @@ public class TestaAplicacao {
 						.println("Total de pedidos processados no tempo limite de 3 min: "
 								+ Buffer.getPedidosProcessados());
 				timer.cancel(); // Termina a execução da tarefa.
+				System.exit(0);
 			}
-		}, 120000); // Parâmetro que define o tempo para a execução da tarefa
+		}, 180000); // Parâmetro que define o tempo para a execução da tarefa
 					// (em milisegundos).
-		for (int i = 0; i < qtdThreads; i++) {
-			// Manda o programa aguardar até que todas a threads morram para
-			// continuar o fluxo normal.
-			threadsConsumidoras.get(i).join();
-			threadsProdutoras.get(i).join();
-		}
-		tempo = new Date(System.currentTimeMillis()
-				- tempoInicialDeProcessamento);
-		formatoTempo = new SimpleDateFormat("mm:ss,SSS");
-		tempoTotalDeProcessamento = formatoTempo.format(tempo);
-		System.out.println("Tempo total de processamento: "
-				+ tempoTotalDeProcessamento);
 	}
 }
